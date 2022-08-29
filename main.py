@@ -1,6 +1,8 @@
 from bs4 import BeautifulSoup
 import requests
-import re
+from gui import Ui_MainWindow
+from PyQt6 import QtCore, QtGui, QtWidgets
+
 
 
 # function to extract html document from given url
@@ -14,7 +16,8 @@ def getHTMLdocument(url):
 
 # assign required credentials
 # assign URL
-url_to_scrape = "https://www.pokellector.com/sets"
+base_url = "https://www.pokellector.com"
+url_to_scrape = base_url + "/sets"
 
 # create document
 html_document = getHTMLdocument(url_to_scrape)
@@ -22,6 +25,28 @@ html_document = getHTMLdocument(url_to_scrape)
 # create soap object
 soup = BeautifulSoup(html_document, 'html.parser')
 
+pokemonCount = 0
+
 with open("output.txt", "w") as file:
-    source = soup.find_all("a", class_="button")
-    print("done")
+
+    for button in soup.find_all("a", class_="button"):
+        setPageURL = base_url + button.get("href")
+
+        print(setPageURL)
+        cardSoup = BeautifulSoup(getHTMLdocument(setPageURL), "html.parser")
+        for pokemon in cardSoup.find_all("div", class_="plaque"):
+            print(pokemon.text)
+
+            pokemonCount += 1
+
+    print(pokemonCount)
+
+
+
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    MainWindow = QtWidgets.QMainWindow()
+    ui = Ui_MainWindow()
+    MainWindow.show()
+    sys.exit(app.exec())
