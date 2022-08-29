@@ -13,33 +13,33 @@ def getHTMLdocument(url):
     # response will be provided in JSON format
     return response.text
 
+def main():
+    # assign required credentials
+    # assign URL
+    base_url = "https://www.pokellector.com"
+    url_to_scrape = base_url + "/sets"
 
-# assign required credentials
-# assign URL
-base_url = "https://www.pokellector.com"
-url_to_scrape = base_url + "/sets"
+    # create document
+    html_document = getHTMLdocument(url_to_scrape)
 
-# create document
-html_document = getHTMLdocument(url_to_scrape)
+    # create soap object
+    soup = BeautifulSoup(html_document, 'html.parser')
 
-# create soap object
-soup = BeautifulSoup(html_document, 'html.parser')
+    pokemonCount = 0
 
-pokemonCount = 0
+    with open("output.txt", "w") as file:
 
-with open("output.txt", "w") as file:
+        for button in soup.find_all("a", class_="button"):
+            setPageURL = base_url + button.get("href")
 
-    for button in soup.find_all("a", class_="button"):
-        setPageURL = base_url + button.get("href")
+            print(setPageURL)
+            cardSoup = BeautifulSoup(getHTMLdocument(setPageURL), "html.parser")
+            for pokemon in cardSoup.find_all("div", class_="plaque"):
+                print(pokemon.text)
 
-        print(setPageURL)
-        cardSoup = BeautifulSoup(getHTMLdocument(setPageURL), "html.parser")
-        for pokemon in cardSoup.find_all("div", class_="plaque"):
-            print(pokemon.text)
+                pokemonCount += 1
 
-            pokemonCount += 1
-
-    print(pokemonCount)
+        print(pokemonCount)
 
 
 
@@ -48,5 +48,6 @@ if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
+    main()
     MainWindow.show()
     sys.exit(app.exec())
