@@ -134,4 +134,4 @@ dmypy.json
 
 *.autosave
 
-/gui
+/gui/gui/*

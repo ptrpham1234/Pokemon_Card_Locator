@@ -17,10 +17,12 @@
 ################# I M P O R T S #################
 import re
 
-from bs4 import BeautifulSoup
+import sys
 import requests
-# from gui import Ui_MainWindow
-# from PyQt6 import QtCore, QtGui, QtWidgets
+from bs4 import BeautifulSoup
+from gui import Ui_MainWindow
+from PyQt6 import QtCore, QtGui, QtWidgets
+
 
 
 base_url = "https://www.pokellector.com"
@@ -39,6 +41,10 @@ def main():
     # assign required credentials
     # assign URL
 
+    app = QtWidgets.QApplication(sys.argv)
+    MainWindow = QtWidgets.QMainWindow()
+
+
 
     # create document
     html_document = getHTMLdocument(url_to_scrape)
@@ -46,12 +52,13 @@ def main():
     # create soap object
     soup = BeautifulSoup(html_document, 'html.parser')
 
-    set_list = set_name_getter(soup)
+    # Get the names of the sets
+    setList = set_name_getter(soup)
 
-    print(set_list)
-    # TODO: send the list to the UI here
-
-    print("done")
+    # send the list to the UI here
+    ui = Ui_MainWindow(MainWindow, setList)
+    MainWindow.show()
+    app.exec()
 
 #############################################################################################################
 # Function:            main
@@ -85,7 +92,9 @@ def set_name_getter(soup):
 
         setName = button.get("href").strip()
         setName = setName[1:-1].replace("-", " ")
+        setName = setName.replace(" Expansion", "")
         pokemonSets.append(setName)
+        print(setName)
 
 
     return pokemonSets
@@ -101,12 +110,6 @@ def set_name_getter(soup):
 #############################################################################################################
 if __name__ == "__main__":
     main()
-    # import sys
-    # app = QtWidgets.QApplication(sys.argv)
-    # MainWindow = QtWidgets.QMainWindow()
-    # ui = Ui_MainWindow()
-    # MainWindow.show()
-    # sys.exit(app.exec())
 
     # print(setPageURL)
     # cardSoup = BeautifulSoup(getHTMLdocument(setPageURL), "html.parser")
