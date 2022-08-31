@@ -120,7 +120,7 @@ class Ui_MainWindow(object):
         self.dropBox.setItemText(0, "Select a set")
         self.calculateButton.setText(_translate("MainWindow", "Calculate"))
         self.totalCardNumLabel.setText(_translate("MainWindow", "sampleLabel"))
-        self.outputDisplay.setHtml(_translate("MainWindow", "This is a text display"))
+        self.outputDisplay.setPlainText(_translate("MainWindow", "This is a text display"))
 
     #############################################################################################################
     # Function:            main
