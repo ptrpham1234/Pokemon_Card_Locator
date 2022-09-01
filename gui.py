@@ -43,6 +43,8 @@ class Ui_MainWindow(object):
         self.searchLabel.setMaximumSize(QtCore.QSize(90, 24))
         self.searchLabel.setObjectName("searchLabel")
         self.gridLayout.addWidget(self.searchLabel, 1, 0, 1, 1)
+
+        # Drop box Configs
         self.dropBox = QtWidgets.QComboBox(self.centralWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Maximum, QtWidgets.QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -59,10 +61,20 @@ class Ui_MainWindow(object):
         self.dropBox.setObjectName("dropBox")
         self.dropBox.addItem("")
         self.gridLayout.addWidget(self.dropBox, 0, 1, 1, 1)
+
+        # Calculate button configs
         self.calculateButton = QtWidgets.QPushButton(self.centralWidget)
         self.calculateButton.setMaximumSize(QtCore.QSize(130, 24))
         self.calculateButton.setObjectName("calculateButton")
         self.gridLayout.addWidget(self.calculateButton, 2, 1, 1, 1)
+
+        # Link Label
+        self.linkLabel = QtWidgets.QLabel(self.centralWidget)
+        self.linkLabel.setOpenExternalLinks(True)
+        self.set_card_list_link("https://www.google.com/")
+        self.gridLayout.addWidget(self.linkLabel, 2, 0, 1, 1)
+
+
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.inputBox = QtWidgets.QLineEdit(self.centralWidget)
@@ -176,8 +188,23 @@ class Ui_MainWindow(object):
             pokemonCount = len(cardSoup.find_all("div", class_="plaque"))
             self.totalCardNumLabel.setText("/ " + str(pokemonCount))
             self.setCardCount[selectedSet] = pokemonCount
+            self.set_card_list_link(url)
+
         else:
             self.totalCardNumLabel.setText("/ " + str(self.setCardCount[selectedSet]))
+
+
+    #############################################################################################################
+    # Function:            main
+    # Author:              Peter Pham (pxp180041)
+    # Date Started:        08/12/2022
+    #
+    # Description:
+    # function to extract html document from given url
+    #############################################################################################################
+    def set_card_list_link(self, url):
+        self.linkLabel.setText('<a href="' + url + '"><span style=" text-decoration: underline; color:#180ea4;">Card Set Link</span></a>')
+
 
     #############################################################################################################
     # Function:            main
