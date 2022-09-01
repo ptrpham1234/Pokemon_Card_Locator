@@ -94,7 +94,6 @@ def set_name_getter(soup):
         setName = setName[1:-1].replace("-", " ")
         setName = setName.replace(" Expansion", "")
         pokemonSets.append(setName)
-        print(setName)
 
 
     return pokemonSets

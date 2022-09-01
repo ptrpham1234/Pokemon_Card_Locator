@@ -12,6 +12,8 @@ import requests
 from bs4 import BeautifulSoup
 import time
 
+
+
 base_url = "https://www.pokellector.com"
 url_to_scrape = base_url + "/sets"
 
@@ -120,7 +122,7 @@ class Ui_MainWindow(object):
         self.dropBox.setItemText(0, "Select a set")
         self.calculateButton.setText(_translate("MainWindow", "Calculate"))
         self.totalCardNumLabel.setText(_translate("MainWindow", "sampleLabel"))
-        self.outputDisplay.setPlainText(_translate("MainWindow", "This is a text display"))
+        
 
     #############################################################################################################
     # Function:            main
@@ -133,7 +135,7 @@ class Ui_MainWindow(object):
     def main_func(self):
 
         self.dropBox.activated.connect(self.getCardCount)
-        self.inputBox.returnPressed.connect(self.calculate_position)
+        self.inputBox.returnPressed.connect(self.get_user_Input)
 
     #############################################################################################################
     # Function:            main
@@ -152,7 +154,7 @@ class Ui_MainWindow(object):
 
             html = self.getHTMLdocument(url)
 
-            cardSoup = BeautifulSoup(html, "lxml")
+            cardSoup = BeautifulSoup(html, 'html.parser')
             pokemonCount = len(cardSoup.find_all("div", class_="plaque"))
             self.totalCardNumLabel.setText("/ " + str(pokemonCount))
             self.setCardCount[selectedSet] = pokemonCount
@@ -182,11 +184,31 @@ class Ui_MainWindow(object):
     # Description:
     # function to extract html document from given url
     #############################################################################################################
-    def calculate_position(self):
+    def get_user_Input(self):
         userInput = self.inputBox.text().strip()
 
+        # removes all the letters
         userInput = re.sub("\D", "", userInput)
 
-        self.outputDisplay.setPlainText(userInput)
+        try:
+            totalCards = int(self.totalCardNumLabel.text())
+        
+        except ValueError:
+            self.outputDisplay.setPlainText("Error: Try seletecting a card set")
+            return None
 
+        self.calculate_position()
+
+    #############################################################################################################
+    # Function:            main
+    # Author:              Peter Pham (pxp180041)
+    # Date Started:        08/12/2022
+    #
+    # Description:
+    # function to extract html document from given url
+    #############################################################################################################
+    def calculate_position(self):
+        
         pass
+
+
