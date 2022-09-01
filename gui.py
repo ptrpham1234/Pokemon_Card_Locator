@@ -11,8 +11,7 @@ from PyQt6.QtGui import QIntValidator, QValidator
 import requests
 from bs4 import BeautifulSoup
 import time
-
-
+import math
 
 base_url = "https://www.pokellector.com"
 url_to_scrape = base_url + "/sets"
@@ -122,7 +121,6 @@ class Ui_MainWindow(object):
         self.dropBox.setItemText(0, "Select a set")
         self.calculateButton.setText(_translate("MainWindow", "Calculate"))
         self.totalCardNumLabel.setText(_translate("MainWindow", "sampleLabel"))
-        
 
     #############################################################################################################
     # Function:            main
@@ -135,7 +133,27 @@ class Ui_MainWindow(object):
     def main_func(self):
 
         self.dropBox.activated.connect(self.getCardCount)
+        self.inputBox.textChanged.connect(self.validating)
         self.inputBox.returnPressed.connect(self.get_user_Input)
+        self.calculateButton.pressed.connect(self.get_user_Input)
+
+    #############################################################################################################
+    # Function:            main
+    # Author:              Peter Pham (pxp180041)
+    # Date Started:        08/12/2022
+    #
+    # Description:
+    # function to extract html document from given url
+    ############################################################################################################
+    def validating(self, event):
+        validating_rule = QIntValidator(0, 999)
+
+        state = validating_rule.validate(self.inputBox.text(), 1)
+
+        if state[0] == QValidator.State.Invalid:
+            self.inputBox.setText(re.sub(r"\D", "", self.inputBox.text()))
+
+        print(state)
 
     #############################################################################################################
     # Function:            main
@@ -185,19 +203,20 @@ class Ui_MainWindow(object):
     # function to extract html document from given url
     #############################################################################################################
     def get_user_Input(self):
-        userInput = self.inputBox.text().strip()
-
-        # removes all the letters
-        userInput = re.sub("\D", "", userInput)
 
         try:
-            totalCards = int(self.totalCardNumLabel.text())
-        
+            totalCards = self.totalCardNumLabel.text()
+            totalCards = re.sub(r"\D", "", totalCards)
+            totalCards = int(totalCards)
+
+            if int(self.inputBox.text()) > totalCards:
+                self.outputDisplay.setPlainText("Error: Number entered is too big")
+
         except ValueError:
-            self.outputDisplay.setPlainText("Error: Try seletecting a card set")
+            self.outputDisplay.setPlainText("Error: Try selecting a card set")
             return None
 
-        self.calculate_position()
+        self.calculate_position(totalCards)
 
     #############################################################################################################
     # Function:            main
@@ -207,8 +226,18 @@ class Ui_MainWindow(object):
     # Description:
     # function to extract html document from given url
     #############################################################################################################
-    def calculate_position(self):
-        
-        pass
+    def calculate_position(self, totalCards):
+        userInput = int(self.inputBox.text())
+        pageNumber = math.floor((userInput / 9) + 1)
+        if pageNumber % 2 == 0:
+            side = " (Left)"
+        else:
+            side = " (Right)"
 
+        indexNumber = userInput - ((pageNumber - 1) * 9)
 
+        output = "Your card is located at:\n\n" \
+                 "Page Num: " + str(pageNumber) + side + "\n" \
+                                                         "Index: " + str(indexNumber)
+
+        self.outputDisplay.setPlainText(output)
